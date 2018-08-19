@@ -1,0 +1,89 @@
+<div class="row order-data">
+  <div class="col-xs-10 col-xs-offset-1 form">
+
+    <div class="form-group clearfix">
+      <label class="col-xs-4 control-label" for="name">Your name <span class="asterisk">*</span></label>
+      <div class="col-xs-8">
+        <input type="text" placeholder="John Doe" class="form-control" id="name"
+               [(ngModel)]="name" (change)="nameChange()"
+               required #vName="ngModel" />
+
+        <div *ngIf="vName.invalid && (vName.dirty || vName.touched)">
+          <alert type="danger" *ngIf="vName.errors.required">
+            Name is required
+          </alert>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group clearfix">
+      <label class="col-xs-4 control-label" for="day">Day of delivery <span class="asterisk">*</span></label>
+      <div class="col-xs-8">
+        <input type="text" placeholder="19/08/2018" class="form-control" id="date"
+              bsDatepicker [(ngModel)]="date" #vDate="ngModel" required
+              (ngModelChange)="dateChange()" />
+
+        <div *ngIf="vDate.invalid && (vDate.dirty || vDate.touched)">
+          <alert type="danger" *ngIf="vDate.errors.required">
+            Day of delivery is required
+          </alert>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group clearfix">
+      <label class="col-xs-4 control-label" for="phone">Phone number <span class="asterisk">*</span></label>
+      <div class="col-xs-8">
+        <input type="text" placeholder="+79811234567" class="form-control" id="phone"
+               [(ngModel)]="phone" #vPhone="ngModel" required
+               (change)="phoneChange()" />
+
+        <div *ngIf="vPhone.invalid && (vPhone.dirty || vPhone.touched)">
+          <alert type="danger" *ngIf="vPhone.errors.required">
+            Phone is required
+          </alert>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group clearfix">
+      <label class="col-xs-4 control-label" for="email">Email</label>
+      <div class="col-xs-8">
+        <input type="email" placeholder="example@example.com" class="form-control" id="email"
+               [(ngModel)]="email" (change)="emailChange()" />
+      </div>
+    </div>
+
+    <div class="form-group clearfix">
+      <label class="col-xs-4 control-label" for="coupon">Discount coupon number</label>
+      <div class="col-xs-8">
+        <input type="text" placeholder="123456" class="form-control" id="coupon"
+               [(ngModel)]="coupon" (change)="couponChange()" />
+      </div>
+    </div>
+
+    <div class="form-group clearfix">
+      <label class="col-xs-4 control-label" for="discount">Choose payment method <span class="asterisk">*</span></label>
+      <div class="col-xs-8">
+        <select class="form-control" (change)="paymentChange()"
+                [(ngModel)]="payment" required #vPayment="ngModel">
+          <option disabled selected value="0">Please select...</option>
+          <option value="1">Visa / MasterCard</option>
+          <option value="2">Cash</option>
+          <option value="3">PayPal</option>
+        </select>
+
+        <div *ngIf="vPayment.invalid && (vPayment.dirty || vPayment.touched)">
+          <alert type="danger" *ngIf="vPayment.errors.required">
+            Phone is required
+          </alert>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="go-next">
+  <button type="button" class="btn btn-primary btn-next-page" [disabled]="!validateForm()" routerLink="/order/products">Next</button>
+</div>

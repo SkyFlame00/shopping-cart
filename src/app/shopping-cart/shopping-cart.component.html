@@ -1,0 +1,27 @@
+<div class="container wrapper">
+  <div class="row">
+    <div class="col-xs-12">
+
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <button class="tab-btn btn-order"
+             routerLinkActive="active"
+             routerLink="/order/details">Order</button>
+        </li>
+        <li class="nav-item">
+          <button class="tab-btn btn-products"
+             routerLinkActive="active"
+             routerLink="/order/products"
+             [disabled]="!isFormValid()">Products</button>
+        </li>
+      </ul>
+
+      <div class="tab-content">
+        <div class="tab-pane active">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

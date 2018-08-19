@@ -1,0 +1,176 @@
+<div class="content-block">
+  <button class="btn btn-primary btn-addproduct" (click)="addNewRow()">Add a product to cart</button>
+</div>
+
+<div class="content-block">
+  <table class="">
+    <thead>
+      <tr>
+        <td>Category</td>
+        <td>Product</td>
+        <td>Price</td>
+        <td>Discount</td>
+        <td>Amount</td>
+        <td>Total price</td>
+        <td>Total disc.</td>
+        <td>Total</td>
+        <td></td>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let row of displayedRows">
+        <tr *ngIf="!row.beingEdited">
+          <td>{{ row.categoryTitle }}</td>
+          <td>{{ row.productTitle }}</td>
+          <td>${{ row.price }}</td>
+          <td>${{ row.discount }}</td>
+          <td>{{ row.amount }}</td>
+          <td>${{ row.priceTotal }}</td>
+          <td>${{ row.discountTotal }}</td>
+          <td>${{ row.total }}</td>
+          <td>
+            <button (click)="editProduct(row)" class="btn btn-warning btn-edit btn-img"></button>
+            <button (click)="deleteProduct(row)" class="btn btn-danger btn-delete btn-img"></button>
+          </td>
+        </tr>
+
+        <tr *ngIf="row.beingEdited">
+          <td>
+            <select [(ngModel)]="tmpRow.categoryTitle" (change)="categoryChange(tmpRow)" class="form-control">
+              <ng-container *ngFor="let category of categories">
+                <ng-container *ngIf="category.title == tmpRow.categoryTitle; then selected; else notSelected"></ng-container>
+
+                <ng-template #selected>
+                  <option value="{{ category.title }}" selected>
+                    {{ category.title }}
+                  </option>
+                </ng-template>
+
+                <ng-template #notSelected>
+                  <option value="{{ category.title }}">
+                    {{ category.title }}
+                  </option>
+                </ng-template>
+              </ng-container>
+            </select>
+          </td>
+          <td>
+            <select [(ngModel)]="tmpRow.productTitle" (change)="productChange(tmpRow)" class="form-control">
+              <ng-container *ngFor="let product of productsForCategory">
+                <ng-container *ngIf="product.title == tmpRow.productTitle; then selected; else notSelected"></ng-container>
+
+                <ng-template #selected>
+                  <option value="{{ product.title }}" selected>
+                    {{ product.title }}
+                  </option>
+                </ng-template>
+
+                <ng-template #notSelected>
+                  <option value="{{ product.title }}">
+                    {{ product.title }}
+                  </option>
+                </ng-template>
+              </ng-container>
+            </select>
+          </td>
+          <td>${{ tmpRow.price }}</td>
+          <td>${{ tmpRow.discount }}</td>
+          <td><input type="text" class="form-control amount-change"
+               [(ngModel)]="tmpRow.amount" (change)="amountChange(tmpRow)" /></td>
+          <td>${{ tmpRow.priceTotal }}</td>
+          <td>${{ tmpRow.discountTotal }}</td>
+          <td>${{ tmpRow.total }}</td>
+          <td>
+            <button (click)="confirmChanges(row)" class="btn btn-success btn-img btn-ok"></button>
+            <button (click)="cancelEditing(row)" class="btn btn-danger btn-img btn-cancel"></button>
+          </td>
+        </tr>
+      </ng-container>
+
+      <tr *ngIf="isBeingAdded">
+        <td class="col-xs-2">
+          <select class="form-control" [(ngModel)]="addedRow.categoryTitle" (change)="categoryChange(addedRow)">
+            <option *ngFor="let category of categories"
+                    value="{{ category.title }}">{{ category.title }}</option>
+          </select>
+        </td>
+        <td class="col-xs-2">
+          <select class="form-control" [(ngModel)]="addedRow.productTitle" (change)="productChange(addedRow)">
+            <option *ngFor="let product of productsForCategory"
+                    value="{{ product.title }}">{{ product.title }}</option>
+          </select>
+        </td>
+        <td>${{ addedRow.price }}</td>
+        <td>${{ addedRow.discount }}</td>
+        <td>
+          <input type="text" class="form-control amount-change"
+                 [(ngModel)]="addedRow.amount" (change)="amountChange(addedRow)" />
+        </td>
+        <td class="col-xs-2">${{ addedRow.priceTotal }}</td>
+        <td class="col-xs-2">${{ addedRow.discountTotal }}</td>
+        <td class="col-xs-2">${{ addedRow.total }}</td>
+        <td class="col-xs-4">
+          <button class="btn btn-primary" (click)="submitAddingRow()" class="btn btn-success btn-img btn-ok"></button>
+          <button class="btn btn-primary" (click)="cancelAdding()" class="btn btn-danger btn-img btn-cancel"></button>
+        </td>
+      </tr>
+
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="td-bordered">${{ sumPriceTotalForPage }}</td>
+        <td class="td-bordered">${{ sumDiscountTotalForPage }}</td>
+        <td class="td-bordered">${{ sumTotalForPage }}</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="content-block table-pagination">
+  Page
+  <button class="btn btn-primary btn-table-nav btn-prev-tablepage" (click)="goPreviousPage()" *ngIf="isInsertedCurrentPageCorrect && currentPage > 1"></button>
+  <input type="text" class="form-control input-current-page"
+        [(ngModel)]="currentPage"
+        (change)="currentPageChange()" />
+  <button class="btn btn-primary btn-table-nav btn-next-tablepage" (click)="goNextPage()" *ngIf = "isInsertedCurrentPageCorrect && currentPage < numOfPages"></button>
+  of {{ numOfPages }}
+</div>
+
+<div class="content-block">
+  <alert type="danger"
+         *ngIf="!isInsertedCurrentPageCorrect">Inserted value must be positive integer between 1 and {{ numOfPages }}</alert>
+
+  <alert type="danger" *ngIf="!isAmountCorrect">
+         Amount being inserted must be positive integer</alert>
+
+  <ng-container *ngIf="isCatEmpty || isProdEmpty">
+    <ng-container *ngIf="isCatEmpty && isProdEmpty; then both; else one"></ng-container>
+
+    <ng-template #both>
+      <alert type="danger">You haven't chosen both category and product.</alert>
+    </ng-template>
+
+    <ng-template #one>
+      <alert type="danger" *ngIf="isCatEmpty">You haven't chosen category.</alert>
+      <alert type="danger" *ngIf="isProdEmpty">You haven't chosen product.</alert>
+    </ng-template>
+  </ng-container>
+</div>
+
+<div class="row content-block">
+  <div class="col-xs-6 sum-total">
+    <span>Total: <span class="sum">${{ sumTotal }}</span></span>
+  </div>
+
+  <div class="col-xs-6 checkout">
+    <button class="btn btn-success btn-checkout">Checkout</button>
+  </div>
+</div>
+
+<div class="go-back content-block">
+  <button class="btn btn-primary btn-prev-page" routerLink="/order/details">Previous</button>
+</div>
