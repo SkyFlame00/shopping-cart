@@ -1,6 +1,6 @@
 # Shopping cart app
 
-This app partially mimics buying process chain in an online shop. There are two steps of the process available: inserting user's private data and choosing goods user is going to buy. Total price is calculated as well as total discount.
+This app partially mimics buying process chain in an online shop. There are two steps of the process available: inserting user private data and choosing goods user is going to buy. Total price is calculated as well as total discount.
 
 ## Launch
 
